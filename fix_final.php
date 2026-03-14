@@ -1,3 +1,43 @@
+<?php
+
+// =============================================
+// 1. إصلاح nixpacks.toml
+// =============================================
+file_put_contents('nixpacks.toml', <<<'EOT'
+[phases.setup]
+nixPkgs = ["php82", "php82Extensions.pdo", "php82Extensions.pdo_mysql", "php82Extensions.mbstring", "php82Extensions.tokenizer", "php82Extensions.xml", "php82Extensions.ctype", "php82Extensions.fileinfo", "php82Extensions.bcmath", "php82Extensions.curl", "php82Extensions.gd", "composer"]
+
+[phases.install]
+cmds = ["composer install --no-dev --optimize-autoloader"]
+
+[phases.build]
+cmds = [
+    "php artisan config:cache",
+    "php artisan route:cache",
+    "php artisan view:cache"
+]
+
+[start]
+cmd = "php artisan migrate --force && php -S 0.0.0.0:$PORT -t public"
+EOT);
+echo "✓ nixpacks.toml\n";
+
+// =============================================
+// 2. إصلاح Procfile
+// =============================================
+file_put_contents('Procfile', 'web: php artisan migrate --force && php -S 0.0.0.0:$PORT -t public');
+echo "✓ Procfile\n";
+
+// =============================================
+// 3. حذف payments/app.blade.php الغلط
+//    وإنشاء payments/index.blade.php الصح
+// =============================================
+if (file_exists('resources/views/payments/app.blade.php')) {
+    unlink('resources/views/payments/app.blade.php');
+    echo "✓ حذف payments/app.blade.php\n";
+}
+
+file_put_contents('resources/views/payments/index.blade.php', <<<'EOT'
 @extends('layouts.app')
 @section('content')
 <h1>إدارة الديون</h1>
@@ -62,3 +102,10 @@
 </div>
 @endif
 @endsection
+EOT);
+echo "✓ payments/index.blade.php\n";
+
+echo "\n✅ تم! هلق شغّل:\n";
+echo "git add .\n";
+echo "git commit -m \"fix railway deployment\"\n";
+echo "git push\n";
