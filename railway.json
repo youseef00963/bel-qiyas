@@ -4,6 +4,6 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "composer install --no-dev --optimize-autoloader && php -S 0.0.0.0:${PORT} -t public"
+   "startCommand": "php artisan migrate --force && php -S 0.0.0.0:$PORT -t public"
   }
 }
