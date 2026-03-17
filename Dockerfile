@@ -10,10 +10,7 @@ WORKDIR /app
 COPY . .
 
 RUN composer install --no-dev --optimize-autoloader
-RUN php artisan config:cache || true
-RUN php artisan route:cache || true
-RUN php artisan view:cache || true
 
 EXPOSE 8080
 
-CMD php artisan migrate --force && php -S 0.0.0.0:$PORT -t public
+ENTRYPOINT ["/bin/sh", "-c", "php artisan migrate --force && php -S 0.0.0.0:${PORT:-8080} -t public"]
