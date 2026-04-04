@@ -24,12 +24,18 @@ public function showLogin() {
         Auth::logout();
         return redirect()->route('login');
     }
-    public function dashboard() {
+   /* public function dashboard() {
         $totalDebt = Order::selectRaw('SUM(total_amount - paid_amount) as debt')->value('debt') ?? 0;
         $priorityClients = Client::whereHas('orders', function($q) {
             $q->whereNull('delivery_date')->orWhere('delivery_date','>=',now());
         })->with(['orders'=>function($q){ $q->orderBy('delivery_date'); }])
         ->get()->sortBy(fn($c)=>optional($c->orders->first())->delivery_date);
         return view('dashboard', compact('totalDebt','priorityClients'));
-    }
+    }*/
+        public function dashboard()
+{
+    $totalDebt = 0;
+    $priorityClients = collect();
+    return view('dashboard', compact('totalDebt', 'priorityClients'));
+}
 }
