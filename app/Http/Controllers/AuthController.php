@@ -5,10 +5,16 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Client;
 use App\Models\Order;
 class AuthController extends Controller {
-    public function showLogin() {
+/*  
+public function showLogin() {
         if (Auth::check()) return redirect()->route('dashboard');
         return view('auth.login');
     }
+        */
+    public function showLogin()
+{
+    return redirect()->route('dashboard');
+}
     public function login(Request $request) {
         $credentials = $request->validate(['email'=>'required|email','password'=>'required']);
         if (Auth::attempt($credentials, $request->remember)) return redirect()->route('dashboard');
